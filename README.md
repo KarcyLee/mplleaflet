@@ -29,7 +29,19 @@ Normally, displaying data as longitude, latitude will cause a cartographer to cr
 # Convert to interactive Leaflet map
 >>> import mplleaflet
 >>> mplleaflet.show()
+
+# chinese tencent map
+tile = "tencent_normal"
+# chinese gaode map
+tile = "gaode_normal"
+# osm
+tile = "osm" or tiles = None
+
+# show
+mplleaflet.show(tiles=tile)
+
 ```
+
 
 [Click to view final web page](http://htmlpreview.github.io/?https://github.com/jwass/mplleaflet/master/examples/readme_example.html)
 

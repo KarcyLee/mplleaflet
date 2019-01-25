@@ -1,5 +1,7 @@
-import json
-from json.encoder import JSONEncoder
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function)
+from json import encoder
 
 
 def iter_rings(data, pathcodes):
@@ -21,7 +23,7 @@ def iter_rings(data, pathcodes):
         yield ring
 
 
-class FloatEncoder(JSONEncoder):
+class FloatEncoder(encoder.JSONEncoder):
     _formatter = ".3f"
 
     def iterencode(self, o, _one_shot=False):
@@ -31,17 +33,17 @@ class FloatEncoder(JSONEncoder):
             for chunk in JSONEncoder().iterencode(bigobject):
                 mysocket.write(chunk)
         """
-        c_make_encoder_original = json.encoder.c_make_encoder
-        json.encoder.c_make_encoder = None
+        c_make_encoder_original = encoder.c_make_encoder
+        encoder.c_make_encoder = None
 
         if self.check_circular:
             markers = {}
         else:
             markers = None
         if self.ensure_ascii:
-            _encoder = json.encoder.encode_basestring_ascii
+            _encoder = encoder.encode_basestring_ascii
         else:
-            _encoder = json.encoder.encode_basestring
+            _encoder = encoder.encode_basestring
 
         def floatstr(o, allow_nan=self.allow_nan,
                      _repr=lambda x: format(x, self._formatter),
@@ -65,16 +67,15 @@ class FloatEncoder(JSONEncoder):
 
             return text
 
-        if (_one_shot and json.encoder.c_make_encoder is not None
-                and self.indent is None):
-            _iterencode = json.encoder.c_make_encoder(
+        if (_one_shot and encoder.c_make_encoder is not None and self.indent is None):
+            _iterencode = encoder.c_make_encoder(
                 markers, self.default, _encoder, self.indent,
                 self.key_separator, self.item_separator, self.sort_keys,
                 self.skipkeys, self.allow_nan)
         else:
-            _iterencode = json.encoder._make_iterencode(
+            _iterencode = encoder._make_iterencode(
                 markers, self.default, _encoder, self.indent, floatstr,
                 self.key_separator, self.item_separator, self.sort_keys,
                 self.skipkeys, _one_shot)
-        json.encoder.c_make_encoder = c_make_encoder_original
+        encoder.c_make_encoder = c_make_encoder_original
         return _iterencode(o, 0)

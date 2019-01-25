@@ -1,43 +1,52 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function)
+
 import json
 import os
-
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 import numpy as np
 import pyproj
-
 import mplleaflet
 
-# Load up the geojson data
-filename = os.path.join(os.path.dirname(__file__), 'data', 'track.geojson')
-with open(filename) as f:
-    gj = json.load(f)
-features = [feat for feat in gj['features'][::10]]
+if __name__ == "__main__":
+    # Load up the geojson data
+    filename = os.path.join(os.path.dirname(__file__), 'data', 'track.geojson')
+    with open(filename) as f:
+        gj = json.load(f)
+    features = [feat for feat in gj['features'][::10]]
 
-xy = np.array([feat['geometry']['coordinates'] for feat in features])
+    xy = np.array([feat['geometry']['coordinates'] for feat in features])
 
-# Transform the data to EPSG:26986 (Mass. state plane)
-proj_in = pyproj.Proj(preserve_units=True, init='epsg:4326', no_defs=True)
-crs_out = {'init': 'epsg:26986', 'no_defs': True}
-proj_out = pyproj.Proj(preserve_units=True, **crs_out)
-xy = np.array([pyproj.transform(proj_in, proj_out, c[0], c[1]) for c in xy])
+    # Transform the data to EPSG:26986 (Mass. state plane)
+    proj_in = pyproj.Proj(preserve_units=True, init='epsg:4326', no_defs=True)
+    crs_out = {'init': 'epsg:26986', 'no_defs': True}
+    proj_out = pyproj.Proj(preserve_units=True, **crs_out)
+    xy = np.array([pyproj.transform(proj_in, proj_out, c[0], c[1]) for c in xy])
 
-# Grab the speed (m/s)
-speed = np.array([feat['properties']['speed'] for feat in features])
+    print("xy=", xy)
 
-# Grab the course. Course is 0 degrees due North, increasing clockwise
-course = np.array([feat['properties']['course'] for feat in features])
-angle = np.deg2rad(-course + 90)  # Convert to angle in xy plane
+    # Grab the speed (m/s)
+    speed = np.array([feat['properties']['speed'] for feat in features])
 
-# Normalize the speed to use as the length of the arrows
-r = speed / max(speed)
-uv = r[:, np.newaxis] * np.column_stack([np.cos(angle), np.sin(angle)])
+    # Grab the course. Course is 0 degrees due North, increasing clockwise
+    course = np.array([feat['properties']['course'] for feat in features])
+    angle = np.deg2rad(-course + 90)  # Convert to angle in xy plane
 
-# For each point, plot an arrow pointing in the direction of the iPhone's
-# course estimate. The arrow length is proportional to the phone's speed
-# estimate. For a bigger effect, color each other based on its speed
-plt.quiver(xy[:,0], xy[:,1], uv[:,0], uv[:,1], speed)
+    # Normalize the speed to use as the length of the arrows
+    r = speed / max(speed)
+    uv = r[:, np.newaxis] * np.column_stack([np.cos(angle), np.sin(angle)])
 
-root, ext = os.path.splitext(__file__)
-mapfile = root  + '.html'
-# Create the map
-mplleaflet.show(path=mapfile, crs=crs_out, tiles=('https://api.mapbox.com/styles/v1/jwasserman/cir51iqda0010bmnic1s5sb71/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiandhc3Nlcm1hbiIsImEiOiJjaW9kNnRiaXUwNGh0dmFrajlqZ25wZnFsIn0.CU4YynqRJkmG1PwWDMBJSA', '<a href="https://mapbox.com/about/maps">© 2017 Mapbox</a> | <a href=https://www.openstreetmap.org/about">© OpenStreetMap</a>'))
+    # For each point, plot an arrow pointing in the direction of the iPhone's
+    # course estimate. The arrow length is proportional to the phone's speed
+    # estimate. For a bigger effect, color each other based on its speed
+    plt.quiver(xy[:, 0], xy[:, 1], uv[:, 0], uv[:, 1], speed)
+
+    root, ext = os.path.splitext(__file__)
+    mapfile = root + '.html'
+    # Create the map
+    mplleaflet.show(path=mapfile, crs=crs_out, tiles=(
+        'https://api.mapbox.com/styles/v1/jwasserman/cir51iqda0010bmnic1s5sb71/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiandhc3Nlcm1hbiIsImEiOiJjaW9kNnRiaXUwNGh0dmFrajlqZ25wZnFsIn0.CU4YynqRJkmG1PwWDMBJSA',
+        '<a href="https://mapbox.com/about/maps">© 2017 Mapbox</a> | <a href=https://www.openstreetmap.org/about">© OpenStreetMap</a>')
+                    )
+

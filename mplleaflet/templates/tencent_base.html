@@ -8,7 +8,7 @@
       height:100%;
     }
     {% endblock %}
-  </style> 
+  </style>
 </head>
 <body>
   <div id="map{{ mapid }}"></div>
@@ -17,7 +17,7 @@
 var map = L.map('map{{ mapid }}');
 L.tileLayer(
   "{{ tile_url }}",
-  {"maxZoom":{{ maxZoom }}, "minZoom":{{ minZoom }}, "attribution": '{{ attribution }}'}).addTo(map);
+  {"maxZoom":{{ maxZoom }}, "minZoom":{{ minZoom }}, "tms":{{ tms }}, "subdomains": '{{ subdomains }}', "attribution": '{{ attribution }}'}).addTo(map);
 var gjData = {{ geojson }};
 
 if (gjData.features.length != 0) {
@@ -26,15 +26,15 @@ if (gjData.features.length != 0) {
       return feature.properties;
     },
     pointToLayer: function (feature, latlng) {
-      var icon = L.divIcon({'html': feature.properties.html, 
-        iconAnchor: [feature.properties.anchor_x, 
-                     feature.properties.anchor_y], 
+      var icon = L.divIcon({'html': feature.properties.html,
+        iconAnchor: [feature.properties.anchor_x,
+                     feature.properties.anchor_y],
           className: 'empty'});  // What can I do about empty?
       return L.marker(latlng, {icon: icon});
     }
   });
   gj.addTo(map);
-  
+
   map.fitBounds(gj.getBounds());
 } else {
   map.setView([0, 0], 1);

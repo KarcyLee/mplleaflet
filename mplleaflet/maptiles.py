@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function)
+
 osm = (
     'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     'Map data (c) <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
@@ -15,9 +19,8 @@ mapbox_bright = (
 
 thunderforest_landscape = (
     'http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png',
-     '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 )
-
 
 esri_aerial = (
     'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png',
@@ -44,12 +47,22 @@ stamen_toner = (
     'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 )
 
-
 cartodb_positron = (
     'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 )
 
+# 腾讯地图
+tencent_normal = (
+    'http://rt{s}.map.gtimg.com/realtimerender?z={z}&x={x}&y={y}&type=vector&style=0',
+    '腾讯地图'
+)
+
+# 高德地图
+gaode_normal = (
+    'http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+    '高德地图'
+)
 
 tiles = {
     'osm': osm,
@@ -61,12 +74,15 @@ tiles = {
     'stamen_toner': stamen_toner,
     'esri_natgeo': esri_natgeo,
     'cartodb_positron': cartodb_positron,
-    'esri_worldtopo': esri_worldtopo
+    'esri_worldtopo': esri_worldtopo,
+    'tencent_normal': tencent_normal,
+    'gaode_normal': gaode_normal,
 }
 
 _mb_url = 'http://{{s}}.tiles.mapbox.com/v3/{mapid}/{{z}}/{{x}}/{{y}}.png'
 _mb_attribution = '<a href="https://www.mapbox.com/about/maps/">Terms & Feedback</a>'
+
+
 def mapbox(mapid):
     url = _mb_url.format(mapid=mapid)
     return (url, _mb_attribution)
-

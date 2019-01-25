@@ -1,17 +1,19 @@
-from __future__ import absolute_import
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function)
 from functools import partial
-
 from jinja2 import Template
-from .mplexporter.renderers.base import Renderer
 import numpy as np
 
+from .mplexporter.renderers.base import Renderer
 from .utils import iter_rings
 
-
-svg_template = Template("""<svg width="{{ width|int }}px" height="{{ height|int }}px" viewBox="{{ minx }} {{ miny }} {{ width }} {{ height }}" xmlns="http://www.w3.org/2000/svg" version="1.1">  <path d="{{ path }}" {% for k, v in style.items() %}{{ k }}="{{ v }}" {% endfor %}/></svg>""")
+svg_template = Template(
+    """<svg width="{{ width|int }}px" height="{{ height|int }}px" viewBox="{{ minx }} {{ miny }} {{ width }} {{ height }}" xmlns="http://www.w3.org/2000/svg" version="1.1">  <path d="{{ path }}" {% for k, v in style.items() %}{{ k }}="{{ v }}" {% endfor %}/></svg>"""
+)
 
 _marker_inflation = 1.25
+
 
 class LeafletRenderer(Renderer):
     def __init__(self, crs=None, epsg=None):
@@ -31,14 +33,12 @@ class LeafletRenderer(Renderer):
 
         self._features = []
 
-
     def geojson(self):
         fc = {
             "type": "FeatureCollection",
             "features": self._features,
         }
         return fc
-
 
     def _convert_style(self, style):
         leaflet_style = {
@@ -71,6 +71,7 @@ class LeafletRenderer(Renderer):
         Return the SVG path's 'd' element.
 
         """
+
         def gen_path_elements(pathcodes, data):
             counts = {'M': 1, 'L': 1, 'C': 3, 'Z': 0}
             it = iter(data)
@@ -83,7 +84,6 @@ class LeafletRenderer(Renderer):
 
         return ' '.join(gen_path_elements(pathcodes, data))
 
-
     def draw_path(self, data, coordinates, pathcodes, style,
                   offset=None, offset_coordinates="data", mplobj=None):
         properties = self._convert_style(style)
@@ -91,7 +91,7 @@ class LeafletRenderer(Renderer):
             # Flip the points about y-axis to align with SVG coordinate
             # system.
             path_points = data.copy()
-            path_points[:,1] *= -1
+            path_points[:, 1] *= -1
             if offset_coordinates != 'data':
                 pass  # Don't know how to work with this yet
             if self.transformfunc:

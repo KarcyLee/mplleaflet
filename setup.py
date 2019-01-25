@@ -1,7 +1,13 @@
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from distutils.core import setup, find_packages
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, division, print_function)
+from setuptools import setup,find_packages
+
+
+# Dependencies.
+with open('requirements.txt') as f:
+    tests_require = f.readlines()
+install_requires = [t.strip() for t in tests_require]
 
 with open('AUTHORS.md') as f:
     authors = f.read()
@@ -26,13 +32,11 @@ setup(
     author_email=AUTHOR_EMAIL,
     maintainer=MAINTAINER,
     maintainer_email=MAINTAINER_EMAIL,
-    url=DOWNLOAD_URL,
-    download_url=DOWNLOAD_URL,
     license=LICENSE,
-    packages=find_packages(),
-    package_data={'': ['*.html']}, # Include the templates
-    install_requires=[
-        "jinja2",
-        "six",
-    ],
+    packages=["mplleaflet", "mplleaflet.templates", "mplleaflet.mplexporter", "mplleaflet.mplexporter.renderers"],
+    # Include the templates
+    package_data={'': ['*.html']},
+    tests_require=['pytest'],
+    install_requires=install_requires,
+    zip_safe=False,
 )
